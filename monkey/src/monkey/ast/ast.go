@@ -13,7 +13,7 @@ type Statement interface {
 
 type Expression interface {
 	Node
-	expressioNode()
+	expressionNode()
 }
 
 type Program struct {
@@ -35,7 +35,7 @@ type LetStatement struct {
 }
 
 func (ls *LetStatement) statementNode()       {}
-func (ls *LetStatement) TokneLiteral() string { return ls.Token.Literal }
+func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 
 type Identifier struct {
 	Token token.Token
