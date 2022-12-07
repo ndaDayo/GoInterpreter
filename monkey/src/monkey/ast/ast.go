@@ -42,6 +42,22 @@ func (p *Program) String() string {
 	return out.String()
 }
 
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
+
 type LetStatement struct {
 	Token token.Token
 	Name  *Identifier
@@ -58,6 +74,7 @@ type Identifier struct {
 
 func (i *Identifier) expressioNode()       {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+func (i *Identifier) String() string       { return i.Value }
 
 type ReturnStatement struct {
 	Token       token.Token
