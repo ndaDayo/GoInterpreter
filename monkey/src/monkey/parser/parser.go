@@ -265,7 +265,7 @@ func (p *Parser) curPrecedence() int {
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	expression := &ast.InfixExpression{
 		Token:    p.curToken,
-		Operator: p.peekToken.Literal,
+		Operator: p.curToken.Literal,
 		Left:     left,
 	}
 
