@@ -186,12 +186,14 @@ func checkParserErrors(t *testing.T, p *Parser) {
 
 func TestParsingPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
-		input        string
-		operator     string
-		integerValue int64
+		input    string
+		operator string
+		value    interface{}
 	}{
 		{"!5", "!", 5},
 		{"-15", "-", 15},
+		{"!true;", "!", true},
+		{"!false;", "!", false},
 	}
 
 	for _, tt := range prefixTests {
@@ -216,12 +218,11 @@ func TestParsingPrefixExpressions(t *testing.T) {
 		exp, ok := stmt.Expression.(*ast.PrefixExpression)
 
 		if !ok {
-			t.Fatalf("exp.Operator is not '%s'. got=%s",
-				tt.operator, exp.Operator)
+			t.Fatalf("smtm is not ast.PrefixExpression. got=%T", stmt.Expression)
 		}
 
-		if !testIntegerLiteral(t, exp.Right, tt.integerValue) {
-			return
+		if exp.Operator != tt.operator {
+			t.Errorf("exp.Operator is not '%s'. got=%s", tt.operator, exp.Operator)
 		}
 	}
 }
