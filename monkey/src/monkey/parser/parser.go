@@ -65,7 +65,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.LPAREN, p.parseGroupExpression)
-
+	p.registerPrefix(token.IF, parseIfExpression)
 	p.nextToken()
 	p.nextToken()
 
@@ -293,4 +293,28 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 	}
 
 	return exp
+}
+
+func (p *Parser) parseIfExpression() ast.Expression {
+	expression := &ast.IfExpression{Token: p.curToken}
+
+	if !p.expectedPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+
+	expression.Condition = p.parseExpression(LOWST)
+
+	if !p.expectedPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectedPeek(token.LBRACE) {
+		return nil
+	}
+
+	expression.Consequence = p.parseBlockStatement()
+
+	return expression
 }
