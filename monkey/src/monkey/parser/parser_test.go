@@ -536,15 +536,15 @@ func TestIfExpression(t *testing.T) {
 
 	if !ok {
 		t.Fatalf("Statements[0] is not ast.ExpressionStatement. got=%T",
-			exp.Consequence.Statements[0]))
+			exp.Consequence.Statements[0])
 	}
 
-    if !testIdentifier(t, consequence.Expression, "x"){
-        return
-    }
+	if !testIdentifier(t, consequence.Expression, "x") {
+		return
+	}
 
-    if exp.Alternative != nil{
-        t.Errorf("exp.Alternative.Statements was not nil. got=%+v", exp.Alternative)
-    }
+	if exp.Alternative != nil {
+		t.Errorf("exp.Alternative.Statements was not nil. got=%+v", exp.Alternative)
+	}
 
 }
