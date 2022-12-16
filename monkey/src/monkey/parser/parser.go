@@ -108,13 +108,13 @@ func (p *Parser) parseStatement() ast.Statement {
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 
-	if !p.expectedPeek(token.IDENT) {
+	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
 
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	if !p.expectedPeek(token.ASSIGN) {
+	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
 
@@ -180,7 +180,7 @@ func (p *Parser) peekTokenIs(t token.TokenType) bool {
 	return p.peekToken.Type == t
 }
 
-func (p *Parser) expectedPeek(t token.TokenType) bool {
+func (p *Parser) expectPeek(t token.TokenType) bool {
 	if p.peekTokenIs(t) {
 		p.nextToken()
 		return true
@@ -290,7 +290,7 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 
 	exp := p.parseExpression(LOWST)
 
-	if !p.expectedPeek(token.RPAREN) {
+	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}
 
@@ -300,7 +300,7 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 func (p *Parser) parseIfExpression() ast.Expression {
 	expression := &ast.IfExpression{Token: p.curToken}
 
-	if !p.expectedPeek(token.LPAREN) {
+	if !p.expectPeek(token.LPAREN) {
 		return nil
 	}
 
@@ -308,11 +308,11 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 	expression.Condition = p.parseExpression(LOWST)
 
-	if !p.expectedPeek(token.RPAREN) {
+	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}
 
-	if !p.expectedPeek(token.LBRACE) {
+	if !p.expectPeek(token.LBRACE) {
 		return nil
 	}
 
@@ -320,7 +320,7 @@ func (p *Parser) parseIfExpression() ast.Expression {
 	if p.peekTokenIs(token.ELSE) {
 		p.nextToken()
 
-		if !p.expectedPeek(token.LBRACE) {
+		if !p.expectPeek(token.LBRACE) {
 			return nil
 		}
 
@@ -352,13 +352,13 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 func (p *Parser) parseFunctionLiteral() ast.Expression {
 	lit := &ast.FunctionLiteral{Token: p.curToken}
 
-	if !p.expectedPeek(token.LPAREN) {
+	if !p.expectPeek(token.LPAREN) {
 		return nil
 	}
 
 	lit.Parameters = p.parseFunctionParameters()
 
-	if !p.expectedPeek(token.LBRACE) {
+	if !p.expectPeek(token.LBRACE) {
 		return nil
 	}
 
@@ -388,7 +388,7 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 		identifiers = append(identifiers, ident)
 	}
 
-	if !p.expectedPeek(token.RPAREN) {
+	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}
 
