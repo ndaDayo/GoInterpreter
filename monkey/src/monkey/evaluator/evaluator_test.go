@@ -40,7 +40,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIngegerObject(t, evaluated, tt.expected)
+		testIntegerObject(t, evaluated, tt.expected)
 	}
 }
 
@@ -95,7 +95,7 @@ func TestBangOperator(t *testing.T) {
 	}
 }
 
-func testIngegerObject(t *testing.T, obj object.Object, expected int64) bool {
+func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	result, ok := obj.(*object.Integer)
 
 	if !ok {
@@ -147,7 +147,7 @@ func TestIfElseExpressions(t *testing.T) {
 		integer, ok := tt.expected.(int)
 
 		if ok {
-			testIngegerObject(t, evaluated, int64(integer))
+			testIntegerObject(t, evaluated, int64(integer))
 		} else {
 			testNullObject(t, evaluated)
 		}
@@ -188,7 +188,7 @@ if (10 > 1) {
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIngegerObject(t, evaluated, tt.expected)
+		testIntegerObject(t, evaluated, tt.expected)
 	}
 }
 
@@ -268,6 +268,49 @@ func TestLetStatement(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		testIngegerObject(t, testEval(tt.input), tt.expected)
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestFunctionObject(t *testing.T) {
+	input := "fn(x){ x + 2; };"
+
+	evaluated := testEval(input)
+	fn, ok := evaluated.(*object.Function)
+
+	if !ok {
+		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if len(fn.Parameters) != 1 {
+		t.Fatalf("function has wrong parameters Parameters=%+v", fn.Parameters)
+	}
+
+	if fn.Parameters[0].String() != "x" {
+		t.Fatalf("parameters is not 'x' got=%q", fn.Parameters[0])
+	}
+
+	expectedBoby := "(x + 2)"
+
+	if fn.Body.String() != expectedBoby {
+		t.Fatalf("body is not %q. got=%q", expectedBoby, fn.Body.String())
+	}
+}
+
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let identity = fn(x) { x; }; identity(5);", 5},
+		{"let identity = fn(x) { return x; }; identity(5);", 5},
+		{"let double = fn(x) { x * 2; }; double(5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"fn(x) { x; }(5)", 5},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
 	}
 }
